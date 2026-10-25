@@ -5,7 +5,7 @@
 * **Centro:** Escuela de Ingeniería Informática (EII), ULPGC
 * **Profesor:** Modesto Castrillón Santana
 * **Autora:** Naiara Díaz Hernández
-* **Código fuente:** [`src/trabajo_S7.js`](src/trabajo_S7.js)
+* **Código fuente:** [`src/trabajo_S6-S7.js`](src/trabajo_S6-S7.js)
 
 ---
 
