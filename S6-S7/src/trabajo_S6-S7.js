@@ -456,7 +456,7 @@ function prepararEscenaYCamara() {
       scene.background = texFondoEspacio;
     });
 
-  // 1. CÁMARA GENERAL (Mantienes el resto de tu código exactamente igual a partir de aquí)
+  // 1. CÁMARA GENERAL
   camaraGeneral = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camaraGeneral.position.set(0, 0, 15);
 
