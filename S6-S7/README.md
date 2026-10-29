@@ -121,7 +121,7 @@ El archivo `src/trabajo_S6-S7.js` organiza la lógica en módulos funcionales bi
 
 La ejecución de la práctica, las diferentes vistas de cámara, el comportamiento de las sombras y la interactividad completa se ilustran en el siguiente registro audiovisual:
 
-▶️ **[Clic aquí para ver la demostración en vídeo de la simulación](S6-S7/media/demo.mp4)**
+▶️ **[Clic aquí para ver la demostración en vídeo de la simulación](media/demo.mp4)**
 
 * **Acreditación de autoría:** La escena cuenta con un encabezado fijo en el DOM superior (`Naiara Díaz Hernández - Sistema Planetario S7 | [V]: Nave/General | [B]: Borrar`), visible de manera ininterrumpida a lo largo de toda la grabación.
 
