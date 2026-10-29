@@ -38,7 +38,7 @@ El sistema consta de:
 ## 2. Extras implementados
 
 * **Fondo espacial dinámico:** se consulta la API APOD de la NASA y, si la entrada del día es una imagen, se usa como fondo de la escena. Si es un vídeo o falla la petición, se usa la textura local `2k_stars_milky_way.jpg`.
-* **Creación interactiva de planetas:** un clic izquierdo sobre el plano de la escena (mediante `Raycaster`) crea un planeta cuya órbita pasa por el punto pulsado. Se pueden configurar radio, velocidad, factor de elipticidad, color, nubes, anillos y una luna.
+* **Creación interactiva de planetas:** un clic izquierdo sobre el plano de la escena (mediante Raycaster) crea un planeta cuya distancia al Sol y ángulo inicial vienen del punto pulsado. Se pueden configurar radio, velocidad, factor de elipticidad, color, nubes, anillos y una luna.
 * **Borrado interactivo:** la tecla `B`, la tecla `Delete` o el botón *Borrar Último* eliminan el último planeta de la lista, junto con su línea de órbita y sus lunas.
 * **Seguimiento de planetas:** desde el panel se puede elegir uno de los 8 planetas del sistema para que la cámara orbital lo mantenga como punto de mira mientras se mueve.
 * **Nave controlable:** la cámara subjetiva permite desplazarse, ascender, descender, alabear y orientar la vista de forma interactiva.
