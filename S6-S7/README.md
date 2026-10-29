@@ -22,6 +22,7 @@ El sistema consta de:
 * Un cinturón de 1.000 asteroides procedurales orbitando entre Marte y Júpiter renderizado en una única llamada de dibujo.
 * Doble sistema de cámaras conmutables: cámara orbital general orientable con selección de seguimiento de astros y cámara subjetiva de nave para vuelo libre.
 * Creación paramétrica de planetas interactivos mediante puntero de ratón, soporte para satélites en cascada, borrado selectivo y panel de control `lil-gui`.
+* Consumo de API Externa (NASA APOD): Integración asíncrona de datos reales para generar un cielo espacial dinámico que cambia a diario.
 
 ---
 
@@ -59,23 +60,33 @@ Para evitar un aspecto plástico y plano:
 * La Tierra combina en su `MeshPhongMaterial` la textura difusa (`map`), un mapa de elevación en escala de grises (`bumpMap`) ponderado con `bumpScale: 0.05` para proyectar microrrelieve ante la luz rasante del Sol, y un mapa especular (`specularMap`) donde los continentes oscuros eliminan el reflejo y los océanos claros reflejan la luz solar.
 * La atmósfera de nubes no se pinta sobre la textura base, sino en una esfera concéntrica independiente con radio un 5% mayor y `alphaMap: texNubesAlpha`, permitiendo ver la rotación de nubes a diferente velocidad sobre el suelo.
 
-### 2.6. Proyección interactiva y prevención de conflictos con la cámara
-* **Raycaster sobre plano invisible:** En lugar de proyectar contra el `GridHelper` (lo cual es impreciso debido a los huecos entre líneas), se proyecta contra un `THREE.PlaneGeometry` no visible situado en $Z = 0$.
-* **Aislamiento en modo vuelo:** Al conmutar a la cámara de la nave (`FlyControls`), el escuchador del evento `mousedown` aborta su ejecución (`if (modoVista === "nave") return;`) y desactiva `OrbitControls`. Esto evita que arrastrar el ratón para orientar la nave cree planetas indeseados en el fondo o desate excepciones de proyección.
+### 2.6. Proyección interactiva y prevención de conflictos (Raycaster)
+Para la creación dinámica de planetas mediante clics, se han implementado diversas capas de seguridad:
+* **Colisión contra plano invisible:** La proyección geométrica se realiza contra un `THREE.PlaneGeometry` no visible situado en $Z = 0$, evitando proyecciones erráticas contra el `GridHelper`.
+* **Aislamiento de la interfaz (GUI):** El evento `mousedown` incluye un filtrado que aborta la proyección si el usuario hace clic sobre elementos del DOM correspondientes a `lil-gui` o botones HTML (`if (event.target.closest(".lil-gui") || event.target.tagName === "BUTTON")`), previniendo la creación accidental de planetas al configurar parámetros.
+* **Zona de exclusión estelar:** Se ha definido un radio de seguridad ($2.5$ unidades) alrededor del Sol; si la distancia del clic calculada mediante el teorema de Pitágoras es inferior a este umbral, la creación se cancela para evitar intersecciones con la estrella principal.
+* **Bloqueo en modo vuelo:** Al conmutar a la cámara de la nave (`FlyControls`), la creación interactiva se suspende para no interferir con la orientación mediante arrastre de ratón.
+
+### 2.7. Integración de API externa (Cielo Dinámico)
+* **Problema:** Un fondo estático (`skybox`) limita el dinamismo de la simulación.
+* **Solución adoptada:** Se ha implementado el consumo asíncrono de la API pública de la NASA *Astronomy Picture of the Day (APOD)* mediante `fetch()`. Al iniciar la aplicación, se solicita la imagen astronómica del día y se mapea dinámicamente sobre `scene.background` usando `THREE.EquirectangularReflectionMapping`. Se ha provisto un *fallback* de seguridad para que, en caso de fallo de red o recepción de formato de vídeo, el sistema aplique la textura local por defecto de la Vía Láctea, garantizando siempre la renderización del espacio espacial.
+
+### 2.8. Responsividad multicanal (Window Resize)
+La aplicación soporta el redimensionamiento dinámico del viewport del navegador. El *event listener* de `resize` no solo ajusta el tamaño del `WebGLRenderer`, sino que recalcula el *aspect ratio* y actualiza las matrices de proyección (`updateProjectionMatrix()`) simultáneamente tanto para la `camaraGeneral` como para la `camaraNave`, evitando distorsiones geométricas (stretching) independientemente del modo de vista activo.
 
 ---
 
 ## 3. Implementación modular del código
 
-El archivo `src/trabajo_S7.js` organiza la lógica en módulos funcionales bien diferenciados:
+El archivo `src/trabajo_S6-S7.js` organiza la lógica en módulos funcionales bien diferenciados:
 
-1. **`prepararEscenaYCamara()`:** Inicializa la escena con fondo estelar panorámico (`scene.background = texFondoEspacio`), configura `camaraGeneral` con `OrbitControls`, `camaraNave` con `FlyControls`, el plano de colisión y el asistente de rejilla.
-2. **`prepararLuces()`:** Define una luz ambiente tenue (`AmbientLight`, intensidad 0.2) para dar lectura a las caras ocultas de los planetas y una luz puntual solar (`PointLight`, intensidad 2.5) con generación de sombras suaves (`castShadow = true`, mapa de $1024 \times 1024$ píxeles).
-3. **`Planeta(radio, dist, vel, col, f1, f2, anguloInicial, opciones)`:** Fábrica universal de cuerpos celestes. Recibe un objeto de opciones que permite asignar de forma opcional `map`, `bumpMap` y `specularMap`, genera la elipse orbital visualizadora y almacena la metadata cinemática en `userData`.
+1. **`prepararEscenaYCamara()`:** Inicializa la escena, ejecuta la llamada asíncrona a la API de la NASA, y configura las dos cámaras (`OrbitControls` y `FlyControls`), el plano de colisión y el asistente de rejilla.
+2. **`prepararLuces()`:** Define una luz ambiente tenue (`AmbientLight`, intensidad 0.2) y una luz puntual solar (`PointLight`, intensidad 2.5) con generación de sombras suaves (`castShadow = true`, mapa de $1024 \times 1024$ píxeles).
+3. **`Planeta(radio, dist, vel, col, f1, f2, anguloInicial, opciones)`:** Fábrica de cuerpos celestes que recibe un objeto de opciones para cargar `map`, `bumpMap` y `specularMap`, genera la elipse orbital visualizadora y almacena la metadata cinemática en `userData`.
 4. **`Luna(padre, dist, radio, vel, col, inclinacion, textura)`:** Instancia satélites acoplados mediante el patrón pivote-hijo con ángulo de inclinación configurable.
 5. **`añadirNubes()` y `añadirAnillos()`:** Funciones auxiliares independientes que agregan capas atmosféricas translúcidas o discos con UV polares a cualquier planeta.
-6. **`crearCinturonAsteroides(rMin, rMax)`:** Distribuye 1.000 rocas en geometría instanciada entre los radios 9.0 y 10.5.
-7. **`panelInteractivo()`:** Construye la interfaz reactiva mediante `lil-gui`, estructurada en carpetas de control temporal, selección de foco de cámara y generador dinámico de planetas con visibilidad condicional para satélites.
+6. **`crearCinturonAsteroides(rMin, rMax)`:** Distribuye 1.000 rocas en geometría instanciada mediante distorsiones toroidales y escalas pseudoaleatorias.
+7. **`panelInteractivo()`:** Construye la interfaz reactiva mediante `lil-gui`. Incluye lógica condicional que muestra u oculta (`show()` / `hide()`) la carpeta de parámetros del satélite basándose en el estado del *checkbox* principal de creación de planetas.
 8. **`animate()`:** Ciclo de renderizado principal que computa las traslaciones orbitales con delta de tiempo escalable, actualiza la matriz del cinturón de asteroides, sincroniza el objetivo de cámara y conmuta el render según la vista activa.
 
 ---
@@ -110,13 +121,9 @@ El archivo `src/trabajo_S7.js` organiza la lógica en módulos funcionales bien 
 
 La ejecución de la práctica, las diferentes vistas de cámara, el comportamiento de las sombras y la interactividad completa se ilustran en el siguiente registro audiovisual:
 
-<div align="center">
-  <video src="media/demo.mp4" controls width="85%" style="max-width: 100%; border-radius: 6px;">
-    Tu navegador no soporta la reproducción directa de vídeo HTML5.
-  </video>
-  <p><em>Vídeo 1: Demostración funcional del simulador (vistas de cámara, cinemática y sombras).</em></p>
-</div>
-* **Acreditación de autoría:** La escena cuenta con un encabezado fijo en el DOM superior (`Naiara Díaz Hernández - Sistema Planetario S7`), visible de manera ininterrumpida a lo largo de toda la grabación.
+▶️ **[Clic aquí para ver la demostración en vídeo de la simulación](S6-S7/media/demo.mp4)**
+
+* **Acreditación de autoría:** La escena cuenta con un encabezado fijo en el DOM superior (`Naiara Díaz Hernández - Sistema Planetario S7 | [V]: Nave/General | [B]: Borrar`), visible de manera ininterrumpida a lo largo de toda la grabación.
 
 ---
 
@@ -125,10 +132,12 @@ La ejecución de la práctica, las diferentes vistas de cámara, el comportamien
 1. **Texturas planetarias y espaciales:**
    * Texturas de 2K del Sol, Mercurio, Venus, Marte, Júpiter, Saturno (y anillos), Urano, Neptuno, Luna y fondo estelar de la Vía Láctea procedentes del catálogo abierto de [Solar System Scope](https://www.solarsystemscope.com/textures/) (licencia Creative Commons Reconocimiento 4.0 Internacional).
    * Mapas de textura de la Tierra (`earthmap1k`, `earthbump1k`, `earthspec1k`, `earthcloudmap` y `earthcloudmaptrans_invert`) correspondientes a los recursos de la sesión S7 facilitados en la asignatura.
-2. **Documentación y bibliotecas de referencia:**
+2. **APIs Externas:**
+   * [NASA Open APIs (APOD)](https://api.nasa.gov/): Proveedor del endpoint para la Imagen Astronómica del Día.
+3. **Documentación y bibliotecas de referencia:**
    * Three.js Documentation ([threejs.org/docs](https://threejs.org/docs/)): módulos `PerspectiveCamera`, `WebGLRenderer`, `MeshPhongMaterial`, `PointLight`, `InstancedMesh`, `OrbitControls` y `FlyControls`.
    * Lil-gui Documentation ([lil-gui.georgealways.com](https://lil-gui.georgealways.com/)).
-   * Material docente y guiones de las sesiones S6 y S7 de Informática Gráfica, EII, ULPGC (Prof. Modesto Castrillón Santana).
+   * Material docente y guiones de las sesiones S6 y S7 de Informática Gráfica.
 
 ---
 
