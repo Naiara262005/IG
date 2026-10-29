@@ -48,7 +48,7 @@ Para dotar al simulador de mayor robustez y atractivo visual, se han implementad
 
 * **Optimización de renderizado:** Uso de `InstancedMesh` para generar un cinturón de asteroides masivo sin penalizar los *draw calls*.
 
-* **Identificación del autor:** Cabecera con el nombre de la autora superpuesta a la escena.
+* **Identificación del autor:** Cabecera con el nombre de la autora superpuesta a la escena en todo momento..
 
 ## 3. Decisiones de diseño y justificación técnica
 
@@ -80,13 +80,13 @@ Si los planetas se añadieran directamente como hijos (`sol.add(planeta)`), cual
 
 * La Tierra combina textura difusa (`map`), mapa de elevación (`bumpMap`) y mapa especular (`specularMap`).
 
-* La atmósfera de nubes no se pinta sobre la textura base, sino en una esfera concéntrica independiente con radio un 5% mayor y `alphaMap`, que deja ver la superficie a través de las zonas transparentes.
+* * La atmósfera de nubes se sitúa en una esfera concéntrica independiente con radio un 5% mayor y `alphaMap`, permitiendo ver la superficie terrestre a través de las zonas transparentes.
 
 ### 3.6. Prevención de conflictos de Raycaster y Cámara
 
 * **Colisión:** Proyección contra un `THREE.PlaneGeometry` invisible en $Z = 0$.
 
-* **Exclusiones:** Se descartan clics sobre la interfaz de `lil-gui` y se respeta un radio de seguridad alrededor del Sol para evitar solapamientos.
+* **Exclusiones:** Se descartan clics sobre la interfaz de `lil-gui` o botones flotantes, y se respeta un radio de seguridad alrededor del Sol para evitar solapamientos.
 
 ## 4. Manual de uso y controles
 
@@ -131,4 +131,8 @@ En cumplimiento con las directrices docentes:
 * **Herramientas empleadas:** Asistentes de IA generativa (Gemini).
 
 * **Alcance del soporte recibido:** Asistencia en la depuración de errores, búsqueda de recursos y ayuda en la redacción de la documentación técnica.
+* **Enlaces a conversaciones:**
+
+  * [Enlace a la conversación de desarrollo y depuración con Gemini](https://share.gemini.google/LDOkguPr30H5)
+
 * **Supervisión:** Todo el código y la documentación fueron integrados y revisados meticulosamente por la autora.
