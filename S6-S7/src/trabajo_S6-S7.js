@@ -444,7 +444,7 @@ function prepararEscenaYCamara() {
         texFondoDinamico.mapping = THREE.EquirectangularReflectionMapping;
         scene.background = texFondoDinamico;
       } else {
-        // Si publican un vídeo, usamos textura local por defecto
+        // Si publican un vídeo, usamos tu textura local por defecto
         texFondoEspacio.mapping = THREE.EquirectangularReflectionMapping;
         scene.background = texFondoEspacio;
       }
