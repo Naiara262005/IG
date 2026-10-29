@@ -1,130 +1,136 @@
 # Práctica S6 y S7: Simulación de Sistema Planetario Interactivo 3D
 
 * **Asignatura:** Informática Gráfica
-
 * **Titulación:** Grado en Ingeniería Informática
-
 * **Centro:** Escuela de Ingeniería Informática (EII), ULPGC
-
 * **Profesor:** Modesto Castrillón Santana
-
 * **Autora:** Naiara Díaz Hernández
-
 * **Código fuente:** [`src/trabajo_S6-S7.js`](src/trabajo_S6-S7.js)
+
+## Índice
+
+1. [Resumen del trabajo realizado](#1-resumen-del-trabajo-realizado)
+2. [Extras implementados](#2-extras-implementados)
+3. [Decisiones de diseño y justificación técnica](#3-decisiones-de-diseño-y-justificación-técnica)
+4. [Manual de uso y controles](#4-manual-de-uso-y-controles)
+5. [Demostración en vídeo](#5-demostración-en-vídeo)
+6. [Limitaciones conocidas](#6-limitaciones-conocidas)
+7. [Fuentes y recursos utilizados](#7-fuentes-y-recursos-utilizados)
+8. [Declaración sobre el uso de herramientas de Inteligencia Artificial](#8-declaración-sobre-el-uso-de-herramientas-de-inteligencia-artificial)
+
 
 ## 1. Resumen del trabajo realizado
 
-En esta práctica se ha desarrollado una aplicación gráfica interactiva en 3D mediante Three.js que modela un sistema planetario completo. El desarrollo integra los hitos planteados en las sesiones S6 (grafo de escena, cinemática orbital desacoplada, satélites, raycasting e interfaz) y S7 (iluminación dinámica, cálculo de sombras suaves, materiales multicanal Phong, mapeo polar de UVs, entorno panorámico y navegación subjetiva con doble cámara).
+En esta práctica se ha desarrollado una aplicación gráfica interactiva en 3D con Three.js que modela un sistema planetario completo. Integra los hitos de la sesión S6 (grafo de escena, cinemática orbital desacoplada, satélites, raycasting e interfaz) y de la sesión S7 (iluminación, sombras suaves, materiales Phong con varios mapas de textura, remapeo polar de UVs, fondo espacial y navegación subjetiva con doble cámara).
 
 El sistema consta de:
 
-* Un Sol central con textura fotográfica y fuente de luz física omnidireccional.
+* **Sol:** esfera de radio 2 con textura fotográfica (`MeshBasicMaterial`) y una luz puntual (`PointLight`) en el origen que ilumina la escena y proyecta sombras.
+* **8 planetas** (Mercurio a Neptuno) con órbitas elípticas independientes, dibujadas como línea, y texturas 2K (1K en el caso de la Tierra).
+* **Tierra:** material Phong con mapa difuso, mapa de relieve (`bumpMap`, escala 0,05) y mapa especular (`specularMap`) que potencia el brillo sobre los océanos, más una capa de nubes concéntrica con `alphaMap`. La **Luna** orbita en un plano inclinado 5,14°.
+* **Venus:** doble capa, con la superficie y una envoltura atmosférica semitransparente (opacidad 0,9).
+* **Saturno:** anillos con textura PNG con canal alfa y UVs remapeadas de forma radial.
+* **Cinturón de 1.000 asteroides** procedurales entre Marte y Júpiter, renderizados con una única llamada de dibujo (`InstancedMesh`).
+* **Dos cámaras conmutables:** una cámara orbital general (`OrbitControls`), con opción de centrarla en un planeta, y una cámara subjetiva de nave (`FlyControls`) para vuelo libre.
+* **Creación interactiva de planetas** con el ratón (con nubes, anillos y una luna opcionales), borrado del último planeta y panel de control `lil-gui`.
+* **Fondo espacial** obtenido de la API APOD de la NASA, con textura local como alternativa.
 
-* Los 8 planetas del sistema solar con órbitas independientes y texturas en resolución 2K (1K en el caso de la Tierra).
+## 2. Extras implementados
 
-* La Tierra con modelado de superficie multicapa (mapa difuso, mapa de rugosidad en escala de grises y mapa de brillo especular sobre masas oceánicas), capa concéntrica de nubes con transparencia alfa y la Luna orbitando en un plano inclinado.
-
-* Venus con doble capa (superficie geológica y envoltura atmosférica traslúcida).
-
-* Saturno con un sistema de anillos concéntricos con canal de transparencia y remapeo de coordenadas de textura.
-
-* Un cinturón de 1.000 asteroides procedurales orbitando entre Marte y Júpiter renderizado en una única llamada de dibujo.
-
-* Doble sistema de cámaras conmutables: cámara orbital general orientable con selección de seguimiento de astros y cámara subjetiva de nave para vuelo libre.
-
-* Creación paramétrica de planetas interactivos mediante puntero de ratón, soporte para satélites opcionales, borrado selectivo y panel de control `lil-gui`.
-
-* Consumo de API Externa (NASA APOD): Integración asíncrona de datos reales para generar un cielo espacial dinámico que cambia a diario.
-
-## 2. Extras implementados (Mejoras sobre los requisitos base)
-
-Para dotar al simulador de mayor robustez y atractivo visual, se han implementado las siguientes características avanzadas:
-
-* **Fondo espacial dinámico:** Consumo de la API de la NASA para actualizar el skybox diariamente.
-
-* **Interactividad avanzada:** Creación paramétrica de planetas haciendo clic en el espacio (Raycasting) y borrado dinámico del planeta, su órbita y sus satélites.
-
-* **Seguimiento dinámico:** Sistema algebraico para que la cámara orbital persiga a cualquier astro en movimiento.
-
-* **Optimización de renderizado:** Uso de `InstancedMesh` para generar un cinturón de asteroides masivo sin penalizar los *draw calls*.
-
-* **Identificación del autor:** Cabecera con el nombre de la autora superpuesta a la escena en todo momento..
+* **Fondo espacial dinámico:** se consulta la API APOD de la NASA y, si la entrada del día es una imagen, se usa como fondo de la escena. Si es un vídeo o falla la petición, se usa la textura local `2k_stars_milky_way.jpg`.
+* **Creación interactiva de planetas:** un clic izquierdo sobre el plano de la escena (mediante `Raycaster`) crea un planeta cuya órbita pasa por el punto pulsado. Se pueden configurar radio, velocidad, factor de elipticidad, color, nubes, anillos y una luna.
+* **Borrado interactivo:** la tecla `B`, la tecla `Delete` o el botón *Borrar Último* eliminan el último planeta de la lista, junto con su línea de órbita y sus lunas.
+* **Seguimiento de planetas:** desde el panel se puede elegir uno de los 8 planetas del sistema para que la cámara orbital lo mantenga como punto de mira mientras se mueve.
+* **Nave controlable:** la cámara subjetiva permite desplazarse, ascender, descender, alabear y orientar la vista de forma interactiva.
+* **Optimización de renderizado:** uso de `InstancedMesh` para el cinturón de asteroides (1 *draw call* para los 1.000 objetos).
+* **Identificación de la autora:** cabecera con el nombre superpuesta a la escena en todo momento (y por tanto visible en el vídeo).
 
 ## 3. Decisiones de diseño y justificación técnica
 
 ### 3.1. Cinemática orbital desacoplada frente a jerarquía simple de mallas
 
-Si los planetas se añadieran directamente como hijos (`sol.add(planeta)`), cualquier rotación aplicada sobre el Sol obligaría a todos los planetas a rotar de forma solidaria y bloqueada a la misma velocidad angular.
+Si los planetas se añadieran como hijos del Sol (`sol.add(planeta)`), cualquier rotación aplicada al Sol se transmitiría a todos ellos, que girarían de forma solidaria con él.
 
-* **Solución adoptada:** Los planetas se agregan directamente a la raíz de la escena. Su traslación orbital se calcula en cada iteración del bucle `animate()` mediante ecuaciones horarias independientes.
-
-* **Rotación intrínseca:** La rotación propia se aplica de forma separada sobre su eje (`planeta.rotation.z`), garantizando independencia física.
+* **Solución adoptada:** los planetas se añaden directamente a la raíz de la escena. En cada iteración de `animate()` se calcula su posición con las ecuaciones paramétricas de una elipse, `x = cos(θ)·dist·f1` e `y = sin(θ)·dist·f2`, con `θ = ánguloInicial + tiempo·velocidad`.
+* **Rotación propia:** se aplica por separado sobre `planeta.rotation.z`, de modo que el giro sobre sí mismo es independiente de la traslación orbital. El Sol también gira sobre su eje (`estrella.rotation.z`).
 
 ### 3.2. Inclinación del plano orbital lunar mediante nodo pivote
 
-* **Problema:** Calcular la órbita de la Luna directamente dentro del planeta distorsiona el movimiento si se inclina el plano.
-
-* **Solución adoptada:** Se inserta un nodo intermedio vacío (`THREE.Object3D`) como hijo del planeta, rotado $5.14^\circ$. La Luna se añade como hija de este pivote, propagando la inclinación automáticamente.
+* **Problema:** calcular la órbita de la Luna directamente dentro del planeta no permite inclinar su plano orbital de forma sencilla.
+* **Solución adoptada:** se inserta un nodo vacío (`THREE.Object3D`) como hijo del planeta, rotado 5,14° en el eje X. La Luna se añade como hija de ese pivote, que le transmite la inclinación. La línea de la órbita lunar también cuelga del pivote.
 
 ### 3.3. Remapeo polar de coordenadas UV en los anillos de Saturno
 
-* **Problema:** `THREE.RingGeometry` mapea las coordenadas UV de forma planar, deformando texturas horizontales.
-
-* **Solución adoptada:** Se itera sobre los vértices calculando la distancia euclídea al centro normalizada entre el radio interior y exterior, asignando $(u, 0.5)$ a las coordenadas UV para lograr anillos concéntricos perfectos.
+* **Problema:** `THREE.RingGeometry` genera UVs planares, que deforman una textura de anillos pensada como una franja radial.
+* **Solución adoptada:** se recorren los vértices y, para cada uno, se calcula su distancia al centro, normalizada entre el radio interior y el exterior. Ese valor se asigna como `u`, con `v = 0.5`, de modo que la textura se reparte en anillos concéntricos. El material usa la textura PNG con transparencia, `DoubleSide` y opacidad 0,9.
 
 ### 3.4. Optimización del cinturón de asteroides con `THREE.InstancedMesh`
 
-* **Solución adoptada:** Se emplea `THREE.InstancedMesh` con una geometría compartida. Mediante un objeto auxiliar `dummy`, se calculan matrices de posición/escala con dispersión toroidal y se suben a la GPU en un único búfer, manteniendo una tasa de refresco fluida.
+* **Solución adoptada:** una única geometría (`DodecahedronGeometry`) y un único material Phong con `flatShading` se comparten entre las 1.000 instancias. Cada asteroide tiene radio orbital entre 9,0 y 10,5, un ángulo inicial aleatorio, una pequeña dispersión en Z, una escala entre 0,5 y 1,8 y su propia velocidad.
+* **Animación:** en cada fotograma se recalculan las matrices con un objeto auxiliar (`dummy`) y se marca `instanceMatrix.needsUpdate`, de modo que todo el cinturón se dibuja en una sola llamada.
 
-### 3.5. Superficie terrestre fotorrealista y capas concéntricas
+### 3.5. Superficie terrestre y capas concéntricas
 
-* La Tierra combina textura difusa (`map`), mapa de elevación (`bumpMap`) y mapa especular (`specularMap`).
+* La Tierra combina textura difusa (`map`), mapa de relieve (`bumpMap`) y mapa especular (`specularMap`) sobre un material `MeshPhongMaterial`.
+* Las nubes se sitúan en una esfera concéntrica independiente, hija de la Tierra, con un radio un 5 % mayor (0,42 frente a 0,40) y un `alphaMap`, de modo que la superficie se ve a través de las zonas transparentes. Venus usa el mismo mecanismo para su envoltura atmosférica, aunque sin `alphaMap`.
 
-* * La atmósfera de nubes se sitúa en una esfera concéntrica independiente con radio un 5% mayor y `alphaMap`, permitiendo ver la superficie terrestre a través de las zonas transparentes.
+### 3.6. Colocación de planetas con Raycaster
 
-### 3.6. Prevención de conflictos de Raycaster y Cámara
+* **Proyección:** el clic se proyecta con un `Raycaster` contra un `THREE.PlaneGeometry` invisible situado en Z = 0. Del punto de intersección se obtienen la distancia al Sol (radio orbital) y el ángulo inicial del nuevo planeta.
+* **Exclusiones:** se ignoran los clics sobre la interfaz de `lil-gui` o sobre botones, los que no sean del botón izquierdo, los realizados en modo nave y los que caen a menos de 2,5 unidades del centro, para no solapar el Sol.
 
-* **Colisión:** Proyección contra un `THREE.PlaneGeometry` invisible en $Z = 0$.
+### 3.7. Iluminación y sombras
 
-* **Exclusiones:** Se descartan clics sobre la interfaz de `lil-gui` o botones flotantes, y se respeta un radio de seguridad alrededor del Sol para evitar solapamientos.
+* **Luz ambiente** (`AmbientLight`, intensidad 0,2) para que la cara no iluminada no quede completamente negra.
+* **Luz puntual** (`PointLight`, intensidad 2,5, `decay` 0,5) en el centro del Sol, con sombras activadas (mapa de 1024×1024).
+* El renderizador usa `PCFSoftShadowMap` (sombras suaves). Los planetas, la Luna, los anillos y los asteroides proyectan y reciben sombras.
 
 ## 4. Manual de uso y controles
 
 ### Teclado y ratón
 
-| Acción | Control | Modo activo | 
-| ----- | ----- | ----- | 
-| **Alternar vista de cámara** | Tecla `V` | General / Nave | 
-| **Borrar último planeta creado** | Tecla `B` o `Delete` | General | 
-| **Crear nuevo planeta** | Clic izquierdo sobre el plano | General | 
-| **Rotar / Zoom / Paneo orbital** | Arrastrar ratón / Rueda de desplazamiento | General | 
-| **Desplazamiento de nave** | Teclas `W` (adelante), `S` (atrás), `A` (izq.), `D` (der.) | Nave | 
-| **Elevación de nave** | Teclas `R` (subir), `F` (bajar) | Nave | 
-| **Alabeo de nave** | Teclas `Q` / `E` | Nave | 
+| Acción | Control | Modo activo |
+| ----- | ----- | ----- |
+| **Alternar vista de cámara** | Tecla `V` o botón *Cambiar Vista (V)* del panel | Ambos |
+| **Borrar el último planeta de la lista** | Tecla `B` o `Delete`, o botón *Borrar Último* | Ambos |
+| **Crear nuevo planeta** | Clic izquierdo sobre el plano de la escena | General |
+| **Rotar / Zoom / Paneo orbital** | Arrastrar con el ratón / rueda / arrastre secundario (`OrbitControls`) | General |
+| **Desplazamiento de la nave** | `W` (adelante), `S` (atrás), `A` (izquierda), `D` (derecha) | Nave |
+| **Elevación de la nave** | `R` (subir), `F` (bajar) | Nave |
+| **Alabeo de la nave** | `Q` / `E` | Nave |
+| **Orientar la vista de la nave** | Arrastrar con el ratón o flechas del teclado (cabeceo y guiñada) | Nave |
+| **Mostrar / ocultar la rejilla** | Botón *Rejilla on/off* (arriba a la izquierda) | Ambos |
 
-### Opciones de la interfaz `lil-gui`
+### Panel `lil-gui` («Configurar Astros»)
 
-* **Cámara y Tiempo:** Conmutar vista, regular paso del tiempo (deslizador y pausa) y seleccionar astro para seguimiento.
+* **Cámara y Tiempo:** botón para cambiar de vista, deslizador *Paso del Tiempo*, botón *Pausar / Reanudar* y selector *Seguir Astro* (Libre, Mercurio, Venus, Tierra, Marte, Júpiter, Saturno, Urano, Neptuno).
+* **Planeta:** *¿Crear Planeta?*, radio, velocidad, excentricidad (factor de elipticidad), color, *¿Añadir Nubes?* y *¿Añadir Anillos?*.
+* **Satélite Opcional:** *¿Llevará Luna?*, radio, velocidad y color de la luna.
+* **Borrar Último:** elimina el último planeta de la lista.
 
-* **Planeta / Satélite:** Parámetros de creación (radio, velocidad, excentricidad, color, nubes, anillos, luna).
+Los planetas creados por el usuario llevan solo el color elegido (sin textura). Las nubes y los anillos opcionales reutilizan las texturas de nubes de la Tierra y de anillos de Saturno.
 
-## 5. Demostración visual e interactiva
+## 5. Demostración en vídeo
 
-A continuación se muestra el enlace a la demostración en vídeo completa:
+▶️ [**Ver la demostración en vídeo de la simulación (demo.mp4)**](media/demo.mp4)
 
-▶️ [**Clic aquí para ver la demostración en vídeo de la simulación (demo.mp4)**](media/demo.mp4)
+La cabecera con el nombre de la autora está fija en el DOM, por lo que aparece durante toda la grabación.
 
-* **Acreditación de autoría:** La escena cuenta con un encabezado fijo en el DOM superior visible durante toda la ejecución.
+## 6. Limitaciones conocidas
 
-## 6. Fuentes y recursos utilizados
+* El clic izquierdo crea un planeta incluso cuando se inicia con él un arrastre para orbitar la cámara (solo se desactiva en modo nave).
+* *Borrar Último* actúa sobre el último elemento de la lista de planetas: si no se ha creado ninguno, elimina los planetas del sistema base empezando por Neptuno.
+* *Paso del Tiempo* y *Pausar* afectan a las órbitas de planetas y lunas, pero no al cinturón de asteroides ni a las rotaciones propias. Además, al cambiarlo, los planetas pueden dar un salto de posición, porque el ángulo se calcula con el tiempo transcurrido desde su creación.
+* *Seguir Astro* reorienta la cámara hacia el planeta, pero no la desplaza con él, y no incluye la Luna ni los planetas creados por el usuario.
+* La imagen del día de la NASA no es una panorámica, por lo que puede verse deformada al aplicarse como fondo equirrectangular. Se usa la clave pública `DEMO_KEY`, con límite de peticiones.
 
-1. **Texturas:** [Solar System Scope](https://www.solarsystemscope.com/textures/) (2K) y recursos de la ULPGC (1K Tierra).
+## 7. Fuentes y recursos utilizados
 
-2. **APIs Externas:** [NASA Open APIs (APOD)](https://api.nasa.gov/).
+1. **Texturas:** [Solar System Scope](https://www.solarsystemscope.com/textures/) (2K) y recursos de la asignatura/ULPGC (1K de la Tierra).
+2. **API externa:** [NASA Open APIs (APOD)](https://api.nasa.gov/).
+3. **Documentación:** [Three.js Docs](https://threejs.org/docs/), [lil-gui](https://lil-gui.georgealways.com) y guiones S6/S7 (Prof. Modesto Castrillón Santana).
 
-3. **Documentación:** [Three.js Docs](https://threejs.org/docs/) y Guiones S6/S7 (Prof. Modesto Castrillón Santana).
-
-## 7. Declaración sobre el uso de herramientas de Inteligencia Artificial
+## 8. Declaración sobre el uso de herramientas de Inteligencia Artificial
 
 En cumplimiento con las directrices docentes:
 
