@@ -21,7 +21,7 @@ Grado en Ingeniería Informática
 |:--------:|-------------|:------:|:------:|
 | [**Semanas 6 y 7**](S6-S7/README.md) | **Simulación de Sistema Planetario 3D**: Grafo de escena, cinemática orbital desacoplada, materiales multicanal Phong, sombras suaves PCF, navegación en doble vista (orbital y nave espacial), cinturón de asteroides con InstancedMesh e interactividad con Raycasting | Completada | [Ver memoria técnica y código](S6-S7/README.md) |
 
-<!-- - [Semana 8](S8/README.md)  -->
+| [**Semana 8**](S8/README.md) | **Canarias de noche**: visualización 3D con three.js de datos abiertos con información geográfica. Luz nocturna VIIRS y relieve de Canarias como terreno con displacement map, agujas de luz con InstancedMesh, observatorios y cumbres leídos desde un CSV, estrellas con partículas, menú con lil-gui e interactividad con Raycasting | Completada | [Ver memoria técnica y código](S8/README.md) |
 <!-- - [Semana 9](S9/README.md)  -->
 <!-- - [Semana 10](S10/README.md)  -->
 <!-- - [Semana 11](S11/README.md)  -->
@@ -34,5 +34,6 @@ Grado en Ingeniería Informática
 - **Material docente original:** Modesto Castrillón Santana ([otsedom](https://github.com/otsedom/)).
 - **Asignatura:** Informática Gráfica, Escuela de Ingeniería Informática, ULPGC.
 - **Recursos multimedia:** Texturas astronómicas 2K obtenidas del catálogo abierto de [Solar System Scope](https://www.solarsystemscope.com/textures/).
+- **Datos de la práctica S8:** luz nocturna de [NASA Worldview](https://worldview.earthdata.nasa.gov) (VIIRS) y mapa de elevación de [Tangram Heightmapper](https://tangrams.github.io/heightmapper/).
 
 ---
