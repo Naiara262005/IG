@@ -266,5 +266,3 @@ Archivos necesarios en `src/`:
 - [Observatorios de Canarias, IAC](https://ocan.iac.es/?p=187)
 - [lil-gui](https://lil-gui.georgealways.com)
 
-***
-Bajo licencia de Creative Commons Reconocimiento - No Comercial 4.0 Internacional
