@@ -20,7 +20,6 @@ Grado en Ingeniería Informática
 | Práctica | Descripción | Estado | Enlace |
 |:--------:|-------------|:------:|:------:|
 | [**Semanas 6 y 7**](S6-S7/README.md) | **Simulación de Sistema Planetario 3D**: Grafo de escena, cinemática orbital desacoplada, materiales multicanal Phong, sombras suaves PCF, navegación en doble vista (orbital y nave espacial), cinturón de asteroides con InstancedMesh e interactividad con Raycasting | Completada | [Ver memoria técnica y código](S6-S7/README.md) |
-
 | [**Semana 8**](S8/README.md) | **Canarias de noche**: visualización 3D con three.js de datos abiertos con información geográfica. Luz nocturna VIIRS y relieve de Canarias como terreno con displacement map, agujas de luz con InstancedMesh, observatorios y cumbres leídos desde un CSV, estrellas con partículas, menú con lil-gui e interactividad con Raycasting | Completada | [Ver memoria técnica y código](S8/README.md) |
 <!-- - [Semana 9](S9/README.md)  -->
 <!-- - [Semana 10](S10/README.md)  -->
