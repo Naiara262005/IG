@@ -11,7 +11,7 @@ Vídeos:
 
 - **Shader tiny (510 bytes), reel vertical (1080×1920, 15 s):**  
   - Archivo local: [`videos/shader-reel.mp4`](videos/shader-reel.mp4)  
-  - YouTube: [Enlace al vídeo del shader]([URL_VIDEO_SHADER](https://youtube.com/shorts/Xj7G97MPuSI?feature=share))
+  - YouTube: [Enlace al vídeo del shader](https://youtube.com/shorts/Xj7G97MPuSI?feature=share)
 - **Demo interactiva de la escena Three.js (1920×1080, 60 s):**  
   - Archivo local: [`videos/demo-escena.mp4`](videos/demo-escena.mp4)  
   - YouTube: [Enlace al vídeo de la demo](URL_VIDEO_DEMO)
