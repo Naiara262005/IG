@@ -34,5 +34,6 @@ Grado en Ingeniería Informática
 - **Asignatura:** Informática Gráfica, Escuela de Ingeniería Informática, ULPGC.
 - **Recursos multimedia:** Texturas astronómicas 2K obtenidas del catálogo abierto de [Solar System Scope](https://www.solarsystemscope.com/textures/).
 - **Datos de la práctica S8:** luz nocturna de [NASA Worldview](https://worldview.earthdata.nasa.gov) (VIIRS) y mapa de elevación de [Tangram Heightmapper](https://tangrams.github.io/heightmapper/).
+- **Shaders de la práctica S9:** funciones de aleatoriedad y patrones basadas en [The Book of Shaders](https://thebookofshaders.com) (Patricio Gonzalez Vivo y Jen Lowe).
 
 ---
