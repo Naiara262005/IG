@@ -14,7 +14,7 @@ Vídeos:
   - YouTube: [Enlace al vídeo del shader](https://youtube.com/shorts/Xj7G97MPuSI?feature=share)
 - **Demo interactiva de la escena Three.js (1920×1080, 60 s):**  
   - Archivo local: [`videos/demo-escena.mp4`](videos/demo-escena.mp4)  
-  - YouTube: [Enlace al vídeo de la demo](URL_VIDEO_DEMO)
+  - YouTube: [Enlace al vídeo de la demo](https://youtu.be/LQb5FGMDa5E)
 
 ---
 
