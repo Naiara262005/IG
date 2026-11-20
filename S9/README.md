@@ -265,7 +265,7 @@ c += brillo * chispa * d * mix(0.25, 0.12, u_luz);
 La diferencia se ve mejor al acercar la cámara a la costa:
 
 ![Detalle con luz encendida](images/mar-cerca.jpg)  
-*Vista a ras del mar con la luz artificial encendida (`teleportCamera(0.5, -2.5, 0.35, 0.5, 0, 0.1)`)*
+*Vista a ras del mar con la luz artificial encendida*
 
 ![Detalle con cielo protegido](images/mar-luz-apagada.png)  
 *Misma posición con la luz artificial apagada: más contraste entre los puntos del agua y destellos más claros*
