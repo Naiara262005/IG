@@ -21,7 +21,7 @@ Grado en Ingeniería Informática
 |:--------:|-------------|:------:|:------:|
 | [**Semanas 6 y 7**](S6-S7/README.md) | **Simulación de Sistema Planetario 3D**: Grafo de escena, cinemática orbital desacoplada, materiales multicanal Phong, sombras suaves PCF, navegación en doble vista (orbital y nave espacial), cinturón de asteroides con InstancedMesh e interactividad con Raycasting | Completada | [Ver memoria técnica y código](S6-S7/README.md) |
 | [**Semana 8**](S8/README.md) | **Canarias de noche**: visualización 3D con three.js de datos abiertos con información geográfica. Luz nocturna VIIRS y relieve de Canarias como terreno con displacement map, agujas de luz con InstancedMesh, observatorios y cumbres leídos desde un CSV, estrellas con partículas, menú con lil-gui e interactividad con Raycasting | Completada | [Ver memoria técnica y código](S8/README.md) |
-<!-- - [Semana 9](S9/README.md)  -->
+| [**Semana 9**](S9/README.md) | **Mar nocturno digital**: shader de fragmentos en GLSL con patrón generativo y dinámico (rejilla ondulada, ola diagonal y destellos bioluminiscentes), versión *tiny code* de 510 bytes que se ejecuta en el editor de The Book of Shaders, e integración como ShaderMaterial en la escena de Canarias de noche, donde el brillo del mar cambia con la luz artificial | Completada | [Ver memoria técnica y código](S9/README.md) |
 <!-- - [Semana 10](S10/README.md)  -->
 <!-- - [Semana 11](S11/README.md)  -->
 <!-- - [Semana 12](S12/README.md) -->
