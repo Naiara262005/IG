@@ -35,5 +35,6 @@ Grado en Ingeniería Informática
 - **Recursos multimedia:** Texturas astronómicas 2K obtenidas del catálogo abierto de [Solar System Scope](https://www.solarsystemscope.com/textures/).
 - **Datos de la práctica S8:** luz nocturna de [NASA Worldview](https://worldview.earthdata.nasa.gov) (VIIRS) y mapa de elevación de [Tangram Heightmapper](https://tangrams.github.io/heightmapper/).
 - **Shaders de la práctica S9:** funciones de aleatoriedad y patrones basadas en [The Book of Shaders](https://thebookofshaders.com) (Patricio Gonzalez Vivo y Jen Lowe).
+- **Audio de la práctica S11:** *River Flows in You* (versión caja de música) de [MusicBoxManiacs](https://musicboxmaniacs.com/).
 
 ---
