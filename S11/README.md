@@ -9,8 +9,7 @@ Práctica de la semana 11 de Informática Gráfica. Naiara Díaz Hernández, Uni
 
 Vídeo:
 
-- **Demo de la caja de música (1920×1080, < 60 s):**  
-  - Archivo local: [`videos/demo.mp4`](videos/demo.mp4)  
+- **Demo de la caja de música (1920×1080, < 60 s):**   
   - YouTube: [Enlace al vídeo de la demo](https://youtu.be/KmmzgZ3Vkwc)
 
 ---
