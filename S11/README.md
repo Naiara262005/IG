@@ -191,7 +191,7 @@ El MP3 tiene que estar en `src/` con el nombre `25_river-flows-in-you_musicboxma
 
 ---
 
-## Referencias y uso de IA
+## Referencias
 
 - [Guion de la semana 11 de Informática Gráfica](https://github.com/otsedom/otsedom.github.io/tree/main/IG/S11): animación con Tween.js, jerarquías, Raycaster y audio en Three.js.
 - [Documentación de Three.js](https://threejs.org/docs/): `Object3D`, `Raycaster`, `Audio`, `AudioLoader` y `Points`.
